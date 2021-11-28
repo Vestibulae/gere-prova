@@ -72,8 +72,3 @@ class Gabaritos(Model):
 
     def __str__(self):
         return f"Gabarito: {self.prova_id.id}; {self.questao_id.id}; {self.resposta_id.id}"
-
-
-# db.connect()
-# db.create_tables([Provas, Questoes, Respostas, Gabaritos])
-# db.close()
