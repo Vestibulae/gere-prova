@@ -1,13 +1,15 @@
 from flask import Flask, request
 from flask.json import jsonify
 from util.controller import getProvaPronta
-
+from flask_cors import CORS
 app = Flask(__name__)
 app.config["DEBUG"] = True
-
+CORS(app)
 
 # , defaults={"prova": "", "ano": "", "fase": "", "materia": "", "numero_questoes": 10})
-@app.route('/gerarprova')
+
+
+@app.route('/api/v1/gerarprova')
 def gerarProva():
     prova = "" if request.args.get(
         'prova') == None else request.args.get('prova')
@@ -53,5 +55,6 @@ def gerarProva():
 #     aluno = Alunos(id=id, nome=nome, idade=idade)
 #     return update(aluno)
 
+print(getProvaPronta(nQuestoes=2, materia="Portugues", ano="", prova="", fase=""))
 
-app.run()
+# app.run()

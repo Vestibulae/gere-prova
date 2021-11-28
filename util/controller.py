@@ -1,6 +1,6 @@
 from util.db import db
 from peewee import *
-from util.models import Provas, Questoes, Respostas, Gabaritos
+from util.models import Provas, Questoes
 # from playhouse.shortcuts import model_to_dict
 
 # def insertProva(prova):
