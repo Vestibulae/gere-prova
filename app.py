@@ -7,8 +7,6 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 CORS(app)
 
-# , defaults={"prova": "", "ano": "", "fase": "", "materia": "", "numero_questoes": 10})
-
 
 @app.route('/api/v1/gerarprova')
 def gerarProva():
@@ -59,5 +57,6 @@ def gerarProva():
 
 # print(getProvaPronta(nQuestoes=2, materia=[
 #       "Portugues", "matematica", "biologia"], ano="", prova="", fase=""))
+
 
 app.run()
