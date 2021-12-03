@@ -72,8 +72,12 @@ def getProvas(nome_prova, ano, fase):
 def getQuestoes(provas, materia, nQuestoes):
     with db.atomic() as trans:
         try:
-            questoes = Questoes.select().where(Questoes.prova_id << provas,
-                                               Questoes.materia ** f"%{materia}%").order_by(fn.Rand()).limit(nQuestoes)
+            if materia:
+                questoes = Questoes.select().where(Questoes.prova_id << provas, Questoes.materia <<
+                                                   materia).order_by(fn.Rand()).limit(nQuestoes)
+            else:
+                questoes = Questoes.select().where(
+                    Questoes.prova_id << provas).order_by(fn.Rand()).limit(nQuestoes)
             trans.commit()
             return questoes
         except Questoes.DoesNotExist as err:

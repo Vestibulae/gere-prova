@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask import json
 from flask.json import jsonify
 from util.controller import getProvaPronta
 from flask_cors import CORS
@@ -11,14 +12,15 @@ CORS(app)
 
 @app.route('/api/v1/gerarprova')
 def gerarProva():
-    prova = "" if request.args.get(
-        'prova') == None else request.args.get('prova')
-    ano = "" if request.args.get('ano') == None else request.args.get('ano')
-    fase = "" if request.args.get('fase') == None else request.args.get('fase')
-    materia = "" if request.args.get(
-        'materia') == None else request.args.get('materia')
-    nQuestoes = 10 if request.args.get(
-        'numero_questoes') == None else request.args.get('numero_questoes')
+    json_data = request.get_json(force=True)
+
+    prova = "" if not 'prova' in json_data else json_data['prova']
+    ano = "" if not 'ano' in json_data else json_data['ano']
+    fase = "" if not 'fase' in json_data else json_data['fase']
+    materia = [] if not 'materia' in json_data else json_data['materia']
+    nQuestoes = 10 if not 'numero_questoes' in json_data else int(
+        json_data['numero_questoes'])
+
     return jsonify(getProvaPronta(prova=prova, ano=ano, fase=fase, materia=materia, nQuestoes=nQuestoes))
 
 
@@ -55,6 +57,7 @@ def gerarProva():
 #     aluno = Alunos(id=id, nome=nome, idade=idade)
 #     return update(aluno)
 
-print(getProvaPronta(nQuestoes=2, materia="Portugues", ano="", prova="", fase=""))
+# print(getProvaPronta(nQuestoes=2, materia=[
+#       "Portugues", "matematica", "biologia"], ano="", prova="", fase=""))
 
-# app.run()
+app.run()
