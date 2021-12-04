@@ -59,4 +59,4 @@ def gerarProva():
 #       "Portugues", "matematica", "biologia"], ano="", prova="", fase=""))
 
 
-app.run()
+app.run(port=8090)
