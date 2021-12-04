@@ -8,7 +8,7 @@ app.config["DEBUG"] = True
 CORS(app)
 
 
-@app.route('/api/v1/gerarprova')
+@app.route('/api/v1/gerarprova', methods=['GET', 'POST'])
 def gerarProva():
     json_data = request.get_json(force=True)
 
