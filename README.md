@@ -1,3 +1,3 @@
-# crudBanco
+# Filtra Provas
 
-Esse Microsserviço tem como objetivo oferecer endpoints para transações com o banco de dados do projeto
+Esse Microsserviço tem como objetivo oferecer endpoints para consultas nas provas no banco de dados

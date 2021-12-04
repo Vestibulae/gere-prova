@@ -1,6 +1,14 @@
 from util.db import db
 from peewee import *
-from util.models import Provas, Questoes
+from util.models import Acertos, Provas, Questoes, Respostas, Usuarios
+from datetime import datetime
+#
+#
+#
+###### seção para geração da prova ######
+#
+#
+#
 
 
 def getProvas(nome_prova, ano, fase):
@@ -56,3 +64,57 @@ def getProvaPronta(prova, ano, fase, materia, nQuestoes):
             "respostas": respostas_json, "gabaritos": gabaritos_json}
 
     return json
+#
+#
+#
+###### seção para correção e inserção dos acertos da prova ######
+#
+#
+#
+
+
+def getAlternativa(id_resposta):
+    with db.atomic() as trans:
+        try:
+            alternativa = Respostas.get_by_id(id_resposta).alternativa
+            trans.commit()
+            return alternativa
+        except Respostas.DoesNotExist as err:
+            print(err, f"data: {id_resposta}")
+
+
+def corrige(usuario, gabaritos, respostas_usuario):
+    timestamp = datetime.now()
+    todos_acertos = []
+    for g in gabaritos:
+        questao = g['questao_id']
+        alternativa_usu = ''
+        for r in respostas_usuario:
+            if r['questao_id'] == questao:
+                alternativa_usu = r['alternativa']
+                break
+
+        alternativa_correta = getAlternativa(g['resposta_id'])
+        acertou = False
+        if alternativa_usu == alternativa_correta:
+            acertou = True
+        acerto = {"usuario_id": usuario, "questao_id": questao,
+                  "acerto": acertou, "data": timestamp}
+        todos_acertos.append(acerto)
+    insereAcertos(todos_acertos)
+    return todos_acertos
+
+
+def insereAcertos(lista_acertos):
+    with db.atomic() as trans:
+        try:
+            Acertos.insert_many(lista_acertos).execute()
+            trans.commit()
+        except Usuarios.DoesNotExist as err:
+            print(err)
+            trans.rollback()
+            raise DoesNotExist("Usuario Inexistente!")
+        except DatabaseError as err:
+            print(err)
+            trans.rollback()
+            raise DatabaseError("Erro no banco de dados!")

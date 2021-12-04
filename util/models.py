@@ -72,3 +72,32 @@ class Gabaritos(Model):
 
     def __str__(self):
         return f"Gabarito: {self.prova_id.id}; {self.questao_id.id}; {self.resposta_id.id}"
+
+
+class Usuarios(Model):
+
+    id = AutoField()
+    nome = CharField(max_length=30)
+    email = CharField(max_length=100, index=True, unique=True)
+    senha = CharField(max_length=40)
+
+    class Meta:
+        database = db
+
+    def __str__(self):
+        return f"Usuario: {self.id}; {self.nome}; {self.email}"
+
+
+class Acertos(Model):
+
+    id = AutoField()
+    usuario_id = ForeignKeyField(Usuarios, index=True)
+    questao_id = ForeignKeyField(Questoes)
+    acerto = BooleanField()
+    data = DateTimeField()
+
+    class Meta:
+        database = db
+
+    def __str__(self):
+        return f"Acerto: {self.id}; {self.usuario_id}; {self.questao_id}; {self.acerto}; {self.timestamp}"
