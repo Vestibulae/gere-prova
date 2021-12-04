@@ -1,8 +1,11 @@
-from flask import Flask, request
-from flask import json
-from flask.json import jsonify
-from util.controller import getProvaPronta
+from flask import Flask, request, jsonify
+from peewee import DoesNotExist
+from util.controller import corrige, getProvaPronta
 from flask_cors import CORS
+from util.models import Acertos
+
+DADOS_INVALIDOS = {"success": False, "message": "Dados Invalidos!"}
+
 app = Flask(__name__)
 app.config["DEBUG"] = True
 CORS(app)
@@ -22,41 +25,22 @@ def gerarProva():
     return jsonify(getProvaPronta(prova=prova, ano=ano, fase=fase, materia=materia, nQuestoes=nQuestoes))
 
 
-# @app.route('/pesquisa/<nome>')
-# def pesquisa(nome):
-#     return jsonify(select(nome))
+@app.route('/api/v1/corrigirprova', methods=['GET', 'POST'])
+def corrigirProva():
+    json_data = request.get_json(force=True)
+    try:
+        usuario = json_data['usuario']
+        gabaritos = json_data['gabaritos']
+        respostas_usuario = json_data['respostas_usuario']
+        correcao = corrige(usuario=usuario, gabaritos=gabaritos,
+                           respostas_usuario=respostas_usuario)
+    except DoesNotExist:
+        return jsonify(DADOS_INVALIDOS), 404
+    except Exception:
+        return jsonify(DADOS_INVALIDOS), 400
+
+    return jsonify(correcao)
 
 
-# @app.route('/aluno/<id>')
-# def aluno(id):
-#     return jsonify(getById(id))
-
-
-# @app.route('/insere', methods=['POST'])
-# def insere():
-#     json_data = request.get_json(force=True)
-#     nome = json_data["nome"]
-#     idade = json_data["idade"]
-#     aluno = Alunos(nome=nome, idade=idade)
-#     return inserir(aluno)
-
-
-# @app.route('/deletar', methods=['DELETE'])
-# def deletar():
-#     id = request.args.get("id")
-#     return delete(id)
-
-
-# @app.route('/atualizar', methods=['PUT'])
-# def atualizar():
-#     id = request.form.get("id")
-#     nome = request.form.get("nome")
-#     idade = request.form.get("idade")
-#     aluno = Alunos(id=id, nome=nome, idade=idade)
-#     return update(aluno)
-
-# print(getProvaPronta(nQuestoes=2, materia=[
-#       "Portugues", "matematica", "biologia"], ano="", prova="", fase=""))
-
-
+Acertos.create_table()
 app.run(port=8090)
