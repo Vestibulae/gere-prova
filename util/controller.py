@@ -118,3 +118,23 @@ def insereAcertos(lista_acertos):
             print(err)
             trans.rollback()
             raise DatabaseError("Erro no banco de dados!")
+#
+#
+#
+###### seção para puxar os dados para os gráficos ######
+#
+#
+#
+
+
+def getAcertos(usuario):
+    with db.atomic() as trans:
+        try:
+            acertos = list(Acertos.select().where(
+                Acertos.usuario_id == usuario))
+            trans.commit()
+
+            return acertos
+        except Usuarios.DoesNotExist as err:
+            print(err)
+            raise DoesNotExist("Usuário Inexistente!")

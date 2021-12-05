@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from peewee import DoesNotExist
-from util.controller import corrige, getProvaPronta
+from util.controller import corrige, getAcertos, getProvaPronta
 from flask_cors import CORS
 from util.models import Acertos
 
@@ -40,6 +40,21 @@ def corrigirProva():
         return jsonify(DADOS_INVALIDOS), 400
 
     return jsonify(correcao)
+
+
+@app.route('/api/v1/dadosgraficos', methods=['GET', 'POST'])
+def dadosGraficos():
+    json_data = request.get_json(force=True)
+    try:
+        usuario = json_data['usuario']
+        dados = getAcertos(usuario=usuario)
+
+    except DoesNotExist:
+        return jsonify(DADOS_INVALIDOS), 404
+    except Exception:
+        return jsonify(DADOS_INVALIDOS), 400
+
+    return jsonify(dados)
 
 
 Acertos.create_table()
