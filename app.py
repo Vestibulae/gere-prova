@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, json, request, jsonify
 from peewee import DoesNotExist
 from util.controller import corrige, getAcertos, getProvaPronta
 from flask_cors import CORS
@@ -8,7 +8,7 @@ DADOS_INVALIDOS = {"success": False, "message": "Dados Invalidos!"}
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
-CORS(app)
+# CORS(app)
 
 
 @app.route('/api/v1/gerarprova', methods=['GET', 'POST'])
@@ -19,7 +19,7 @@ def gerarProva():
     ano = "" if not 'ano' in json_data else json_data['ano']
     fase = "" if not 'fase' in json_data else json_data['fase']
     materia = [] if not 'materia' in json_data else json_data['materia']
-    nQuestoes = 10 if not 'numero_questoes' in json_data else int(
+    nQuestoes = 10 if not 'numero_questoes' in json_data or json_data['numero_questoes'] == "" or json_data['numero_questoes'] == 0 else int(
         json_data['numero_questoes'])
 
     return jsonify(getProvaPronta(prova=prova, ano=ano, fase=fase, materia=materia, nQuestoes=nQuestoes))
